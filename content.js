@@ -1,5 +1,7 @@
-const settingIsFull = true;
-const settingPosition = 'bottom';
+const ytspSettings = {
+    isFull: true,
+    position: 'bottom',
+};
 
 (function () {
     'use strict';
@@ -18,7 +20,7 @@ const settingPosition = 'bottom';
         timeDisplay.style.minWidth = '60px';
         timeDisplay.style.textAlign = 'center';
         timeDisplay.style.overflow = 'hidden';
-        if (settingPosition === 'top') {
+        if (ytspSettings.position === 'top') {
             timeDisplay.style.top = '60px';
             timeDisplay.style.right = '10px';
         }else {
@@ -36,11 +38,11 @@ const settingPosition = 'bottom';
         progressBar.style.position = 'absolute';
         progressBar.style.bottom = '0';
         progressBar.style.left = '0';
-        progressBar.style.height = settingIsFull ? '100%' : '2px';
+        progressBar.style.height = ytspSettings.isFull ? '100%' : '2px';
         progressBar.style.background = 'red';
         progressBar.style.color = 'black';
         progressBar.style.width = '0%';
-        if (settingIsFull) {
+        if (ytspSettings.isFull) {
             progressBar.style.whiteSpace = 'nowrap';
             progressBar.style.lineHeight = '27px';
             progressBar.style.textIndent = '9px';
