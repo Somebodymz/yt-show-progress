@@ -23,7 +23,7 @@ const ytspSettings = {
         if (ytspSettings.position === 'top') {
             timeDisplay.style.top = '60px';
             timeDisplay.style.right = '10px';
-        }else {
+        } else {
             timeDisplay.style.bottom = '10px';
             timeDisplay.style.right = '10px';
         }
@@ -56,6 +56,13 @@ const ytspSettings = {
         document.body.appendChild(timeDisplay);
     }
 
+    function removeTimeDisplay() {
+        let oldDisplay = document.getElementById('ytsp-time-display');
+        if (oldDisplay) {
+            oldDisplay.remove();
+        }
+    }
+
     function formatTime(seconds, fullFormat = false) {
         let hours = Math.floor(seconds / 3600);
         let minutes = Math.floor((seconds % 3600) / 60);
@@ -85,6 +92,7 @@ const ytspSettings = {
         }
     }
 
+    removeTimeDisplay();
     createTimeDisplay();
     setInterval(updateTimeDisplay, 1000);
 })();
