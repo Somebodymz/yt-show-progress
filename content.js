@@ -1,10 +1,11 @@
 console.log('content.js loaded.');
 
 const ytspSettings = {
-    isFull: true,
-    position: 'bottom',
+    mode: 'small',          // small|big
+    isFullBackground: true,
+    position: 'bottom',     // bottom|top
     showTime: true,
-    showPercent: true,
+    showPercent: false,
 };
 
 (async () => {

@@ -43,11 +43,11 @@ export function createTimeDisplay() {
     progressBar.style.position = 'absolute';
     progressBar.style.bottom = '0';
     progressBar.style.left = '0';
-    progressBar.style.height = ytspSettings.isFull ? '100%' : '2px';
+    progressBar.style.height = ytspSettings.isFullBackground ? '100%' : '2px';
     progressBar.style.background = 'red';
     progressBar.style.color = 'black';
     progressBar.style.width = '0%';
-    if (ytspSettings.isFull) {
+    if (ytspSettings.isFullBackground) {
         progressBar.style.whiteSpace = 'nowrap';
         progressBar.style.lineHeight = '27px';
         progressBar.style.textIndent = '9px';
@@ -75,10 +75,19 @@ export function updateTimeDisplay() {
 
     if (timeText && progressBar) {
         let times = getVideoTime()
+        let text = ''
 
-        timeText.textContent = `${times.timeCurrent} / ${times.timeTotal}`;
+        if (ytspSettings.showTime && ytspSettings.showPercent) {
+            text = `${times.timeCurrent} / ${times.timeTotal} (${times.timePercent}%)`
+        } else if (ytspSettings.showTime) {
+            text = `${times.timeCurrent} / ${times.timeTotal}`
+        } else if (ytspSettings.showPercent) {
+            text = `${times.timePercent}%`
+        }
+
+        timeText.textContent = text;
+        progressBar.textContent = text;
         progressBar.style.width = `${times.timePercent}%`;
-        progressBar.textContent = `${times.timeCurrent} / ${times.timeTotal}`;
     }
 }
 
