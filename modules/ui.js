@@ -1,12 +1,12 @@
 const utils = await import(browser.runtime.getURL('modules/utils.js'));
 
-export function init(){
+export function init() {
     removeTimeDisplay()
     createTimeDisplay()
     setInterval(updateTimeDisplay, 1000)
 }
 
-export function disable(){
+export function disable() {
     removeTimeDisplay()
 }
 

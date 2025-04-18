@@ -12,9 +12,9 @@ const ytspSettings = {
 
     const ui = await import(browser.runtime.getURL('modules/ui.js'))
 
-    if (location.href.includes('youtube.com/watch')) {
+    if (showProgressFor(location.href)) {
         ui.init()
-    }else{
+    } else {
         ui.disable()
     }
 })();
@@ -26,9 +26,21 @@ browser.runtime.onMessage.addListener(async message => {
 
     const ui = await import(browser.runtime.getURL('modules/ui.js'))
 
-    if (message.url.includes('youtube.com/watch')) {
+    if (showProgressFor(message.url)) {
         ui.init()
-    }else{
+    } else {
         ui.disable()
     }
 });
+
+function showProgressFor(url) {
+    if (url.includes('youtube.com/watch')) {
+        return true
+    }
+
+    if (url.includes('youtube.com/shorts')) {
+        return true
+    }
+
+    return false
+}
