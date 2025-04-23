@@ -1,11 +1,14 @@
 console.log('content.js loaded.');
 
 const ytspSettings = {
-    mode: 'small',          // small|big
-    isFullBackground: true,
-    position: 'bottom',     // bottom|top
-    showTime: true,
-    showPercent: false,
+    wideEnabled: true,
+
+    tinyEnabled: true,
+    tinyPosition: 'bottom',
+    tinyFullBackground: true,
+    tinyShowTime: true,
+    tinyShowTimeMode: 'reverse', // direct|reverse
+    tinyShowPercent: false,
 };
 
 (async () => {

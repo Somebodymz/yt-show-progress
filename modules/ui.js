@@ -1,5 +1,11 @@
 const utils = await import(browser.runtime.getURL('modules/utils.js'));
 
+const elementNames = {
+    container: 'ytsp-container',
+    timeText: 'ytsp-time-text',
+    progressBar: 'ytsp-progress-bar',
+}
+
 export function init() {
     removeTimeDisplay()
     createTimeDisplay()
@@ -11,43 +17,52 @@ export function disable() {
 }
 
 export function createTimeDisplay() {
-    let timeDisplay = document.createElement('div');
-    timeDisplay.id = 'ytsp-time-display';
-    timeDisplay.style.position = 'fixed';
-    timeDisplay.style.background = 'rgba(0, 0, 0, 0.7)';
-    timeDisplay.style.color = '#fff';
-    timeDisplay.style.padding = '4px 8px';
-    timeDisplay.style.borderRadius = '4px';
-    timeDisplay.style.fontSize = '14px';
-    timeDisplay.style.fontFamily = 'Arial, sans-serif';
-    timeDisplay.style.zIndex = '1000';
-    timeDisplay.style.minWidth = '60px';
-    timeDisplay.style.textAlign = 'center';
-    timeDisplay.style.overflow = 'hidden';
-    if (ytspSettings.position === 'top') {
-        timeDisplay.style.top = '60px';
-        timeDisplay.style.right = '10px';
+    if (ytspSettings.tinyEnabled) {
+        createTimeDisplayTiny()
+    }
+    if (ytspSettings.wideEnabled) {
+        createTimeDisplayWide()
+    }
+}
+
+function createTimeDisplayTiny() {
+    let container = document.createElement('div');
+    container.className = `${elementNames.container} ${elementNames.container}-tiny`;
+    container.style.position = 'fixed';
+    container.style.background = 'rgba(0, 0, 0, 0.7)';
+    container.style.color = '#fff';
+    container.style.padding = '4px 8px';
+    container.style.borderRadius = '4px';
+    container.style.fontSize = '14px';
+    container.style.fontFamily = 'Arial, sans-serif';
+    //container.style.zIndex = '9999';
+    container.style.minWidth = '60px';
+    container.style.textAlign = 'center';
+    container.style.overflow = 'hidden';
+    if (ytspSettings.tinyPosition === 'top') {
+        container.style.top = '60px';
+        container.style.right = '10px';
     } else {
-        timeDisplay.style.bottom = '10px';
-        timeDisplay.style.right = '10px';
+        container.style.bottom = '10px';
+        container.style.right = '10px';
     }
 
     let timeText = document.createElement('div');
+    timeText.className = elementNames.timeText;
     timeText.style.position = 'relative';
     timeText.style.marginBottom = '2px';
-    timeText.id = 'ytsp-time-text';
     timeText.textContent = '...';
 
     let progressBar = document.createElement('div');
-    progressBar.id = 'ytsp-progress-bar';
+    progressBar.className = `${elementNames.progressBar} ${elementNames.progressBar}-tiny`;
     progressBar.style.position = 'absolute';
     progressBar.style.bottom = '0';
     progressBar.style.left = '0';
-    progressBar.style.height = ytspSettings.isFullBackground ? '100%' : '2px';
+    progressBar.style.height = ytspSettings.tinyFullBackground ? '100%' : '2px';
     progressBar.style.background = 'red';
     progressBar.style.color = 'black';
     progressBar.style.width = '0%';
-    if (ytspSettings.isFullBackground) {
+    if (ytspSettings.tinyFullBackground) {
         progressBar.style.whiteSpace = 'nowrap';
         progressBar.style.lineHeight = '27px';
         progressBar.style.textIndent = '9px';
@@ -56,38 +71,70 @@ export function createTimeDisplay() {
         progressBar.style.color = 'red';
     }
 
-    timeDisplay.appendChild(progressBar);
-    timeDisplay.appendChild(timeText);
-    document.body.appendChild(timeDisplay);
+    container.appendChild(progressBar);
+    container.appendChild(timeText);
+    document.body.appendChild(container);
+}
+
+function createTimeDisplayWide() {
+    const container = document.createElement('div');
+    container.className = `${elementNames.container} ${elementNames.container}-wide`;
+    container.style.position = 'absolute';
+    container.style.left = '0';
+    container.style.right = '0';
+    container.style.top = '100%';
+    container.style.width = '100%';
+    container.style.height = '2px';
+    //container.style.zIndex = '9999';
+    container.style.pointerEvents = 'none';
+
+    let progressBar = document.createElement('div');
+    progressBar.className = `${elementNames.progressBar} ${elementNames.progressBar}-wide`;
+    progressBar.style.position = 'absolute';
+    progressBar.style.bottom = '0';
+    progressBar.style.left = '0';
+    progressBar.style.height = '100%';
+    progressBar.style.background = 'red';
+    progressBar.style.color = 'black';
+    progressBar.style.width = '0%';
+
+    container.appendChild(progressBar);
+
+    document.querySelector('#movie_player').closest('#container').appendChild(container);
 }
 
 export function removeTimeDisplay() {
-    let oldDisplay = document.getElementById('ytsp-time-display');
-    if (oldDisplay) {
-        oldDisplay.remove();
+    let oldElements = document.querySelectorAll('.' + elementNames.container);
+    if (oldElements.length > 0) {
+        oldElements.forEach(el => el.remove());
     }
 }
 
 export function updateTimeDisplay() {
 
-    let timeText = document.getElementById('ytsp-time-text');
-    let progressBar = document.getElementById('ytsp-progress-bar');
+    let timeText = document.querySelectorAll('.' + elementNames.timeText);
+    let progressBar = document.querySelectorAll('.' + elementNames.progressBar);
 
-    if (timeText && progressBar) {
-        let times = getVideoTime()
+    let times = getVideoTime()
+
+    if (progressBar.length > 0) {
+        progressBar.forEach(el => el.style.width = `${times.timePercent}%`);
+    }
+
+    if (timeText.length > 0 && progressBar.length > 0) {
         let text = ''
+        let textTime = ytspSettings.tinyShowTimeMode === 'reverse' ? times.timeRemain : times.timeCurrent
 
-        if (ytspSettings.showTime && ytspSettings.showPercent) {
-            text = `${times.timeCurrent} / ${times.timeTotal} (${times.timePercent}%)`
-        } else if (ytspSettings.showTime) {
-            text = `${times.timeCurrent} / ${times.timeTotal}`
-        } else if (ytspSettings.showPercent) {
+        if (ytspSettings.tinyShowTime && ytspSettings.tinyShowPercent) {
+            text = `${textTime} / ${times.timeTotal} (${times.timePercent}%)`
+        } else if (ytspSettings.tinyShowTime) {
+            text = `${textTime} / ${times.timeTotal}`
+        } else if (ytspSettings.tinyShowPercent) {
             text = `${times.timePercent}%`
         }
 
-        timeText.textContent = text;
-        progressBar.textContent = text;
-        progressBar.style.width = `${times.timePercent}%`;
+        timeText.forEach(el => el.textContent = text);
+        progressBar.forEach(el => el.textContent = el.className.includes('tiny') ? text : '')
     }
 }
 
@@ -103,6 +150,7 @@ function getVideoTime() {
     if (video) {
         result = {
             timeCurrent: utils.formatTime(video.currentTime),
+            timeRemain: '-' + utils.formatTime(video.duration - video.currentTime),
             timeTotal: utils.formatTime(video.duration),
             timePercent: Math.floor((video.currentTime / video.duration) * 100),
         }
