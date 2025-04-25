@@ -7,7 +7,6 @@ const ytspSettings = {
     tinyPosition: 'bottom',
     tinyFullBackground: true,
     tinyShowTime: true,
-    tinyShowTimeMode: 'reverse', // direct|reverse
     tinyShowPercent: false,
 };
 
@@ -38,13 +37,5 @@ browser.runtime.onMessage.addListener(async message => {
 });
 
 function showProgressFor(url) {
-    if (url.includes('youtube.com/watch')) {
-        return true
-    }
-
-    if (url.includes('youtube.com/shorts')) {
-        return true
-    }
-
-    return false
+    return !!(url.includes('youtube.com/watch') || url.includes('youtube.com/shorts'))
 }

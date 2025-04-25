@@ -1,4 +1,7 @@
+/** @type {{formatTime:function}} */
 const utils = await import(browser.runtime.getURL('modules/utils.js'));
+
+let mode = 'current'; // current|remain
 
 const elementNames = {
     container: 'ytsp-container',
@@ -111,29 +114,28 @@ export function removeTimeDisplay() {
 }
 
 export function updateTimeDisplay() {
-
     let timeText = document.querySelectorAll('.' + elementNames.timeText);
     let progressBar = document.querySelectorAll('.' + elementNames.progressBar);
 
     let times = getVideoTime()
 
     if (progressBar.length > 0) {
-        progressBar.forEach(el => el.style.width = `${times.timePercent}%`);
+        progressBar.forEach(el => el.style.width = `${times.percent}%`);
     }
 
     if (timeText.length > 0 && progressBar.length > 0) {
         let text = ''
-        let textTime = ytspSettings.tinyShowTimeMode === 'reverse' ? times.timeRemain : times.timeCurrent
+        let textTime = mode === 'remain' ? times.remain : times.current
 
         if (ytspSettings.tinyShowTime && ytspSettings.tinyShowPercent) {
-            text = `${textTime} / ${times.timeTotal} (${times.timePercent}%)`
+            text = `${textTime} / ${times.total} (${times.percent}%)`
         } else if (ytspSettings.tinyShowTime) {
-            text = `${textTime} / ${times.timeTotal}`
+            text = `${textTime} / ${times.total}`
         } else if (ytspSettings.tinyShowPercent) {
-            text = `${times.timePercent}%`
+            text = `${times.percent}%`
         }
 
-        if (isNaN(times.timePercent)) {
+        if (isNaN(times.percent)) {
             text = 'Undefined. Try to reload.'
         }
 
@@ -146,17 +148,18 @@ function getVideoTime() {
     let video = document.querySelector('video');
 
     let result = {
-        timeCurrent: '',
-        timeTotal: '',
-        timePercent: 0,
+        current: '',
+        remain: '',
+        total: '',
+        percent: 0,
     }
 
     if (video) {
         result = {
-            timeCurrent: utils.formatTime(video.currentTime),
-            timeRemain: '-' + utils.formatTime(video.duration - video.currentTime),
-            timeTotal: utils.formatTime(video.duration),
-            timePercent: round((video.currentTime / video.duration) * 100),
+            current: utils.formatTime(video.currentTime),
+            remain: '-' + utils.formatTime(video.duration - video.currentTime),
+            total: utils.formatTime(video.duration),
+            percent: round((video.currentTime / video.duration) * 100),
         }
     }
 
