@@ -133,6 +133,10 @@ export function updateTimeDisplay() {
             text = `${times.timePercent}%`
         }
 
+        if (isNaN(times.timePercent)) {
+            text = 'Undefined. Try to reload.'
+        }
+
         timeText.forEach(el => el.textContent = text);
         progressBar.forEach(el => el.textContent = el.className.includes('tiny') ? text : '')
     }
@@ -152,9 +156,14 @@ function getVideoTime() {
             timeCurrent: utils.formatTime(video.currentTime),
             timeRemain: '-' + utils.formatTime(video.duration - video.currentTime),
             timeTotal: utils.formatTime(video.duration),
-            timePercent: Math.floor((video.currentTime / video.duration) * 100),
+            timePercent: round((video.currentTime / video.duration) * 100),
         }
     }
 
     return result
+}
+
+function round(value, decimals = 1) {
+    const factor = Math.pow(10, decimals);
+    return Math.round(value * factor) / factor;
 }
