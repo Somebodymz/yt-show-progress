@@ -1,7 +1,13 @@
 /** @type {{formatTime:function}} */
 const utils = await import(browser.runtime.getURL('modules/utils.js'));
 
-let mode = 'current'; // current|remain
+const mode = {
+    CURRENT: 'current',
+    REMAIN: 'remain',
+}
+
+/** @type mode */
+let currentMode = mode.CURRENT
 
 const elementNames = {
     container: 'ytsp-container',
@@ -12,7 +18,7 @@ const elementNames = {
 export function init() {
     removeTimeDisplay()
     createTimeDisplay()
-    setInterval(updateTimeDisplay, 1000)
+    setInterval(updateTimeDisplay, 500)
 }
 
 export function disable() {
@@ -54,7 +60,12 @@ function createTimeDisplayTiny() {
     timeText.className = elementNames.timeText;
     timeText.style.position = 'relative';
     timeText.style.marginBottom = '2px';
+    timeText.style.cursor = 'pointer';
     timeText.textContent = '...';
+    timeText.addEventListener('click', e => {
+        currentMode = currentMode === mode.CURRENT ? mode.REMAIN : mode.CURRENT
+        updateTimeDisplay()
+    });
 
     let progressBar = document.createElement('div');
     progressBar.className = `${elementNames.progressBar} ${elementNames.progressBar}-tiny`;
@@ -125,7 +136,7 @@ export function updateTimeDisplay() {
 
     if (timeText.length > 0 && progressBar.length > 0) {
         let text = ''
-        let textTime = mode === 'remain' ? times.remain : times.current
+        let textTime = currentMode === mode.REMAIN ? times.remain : times.current
 
         if (ytspSettings.tinyShowTime && ytspSettings.tinyShowPercent) {
             text = `${textTime} / ${times.total} (${times.percent}%)`
