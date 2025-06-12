@@ -7,7 +7,8 @@ const mode = {
 }
 
 /** @type mode */
-let currentMode = mode.CURRENT
+let ytspCurrentMode = localStorage.getItem('ytspCurrentMode') ?? mode.CURRENT;
+console.log('ytspCurrentMode IS SET TO: ', ytspCurrentMode);
 
 const elementNames = {
     container: 'ytsp-container',
@@ -63,7 +64,8 @@ function createTimeDisplayTiny() {
     timeText.style.cursor = 'pointer';
     timeText.textContent = '...';
     timeText.addEventListener('click', e => {
-        currentMode = currentMode === mode.CURRENT ? mode.REMAIN : mode.CURRENT
+        ytspCurrentMode = (ytspCurrentMode === mode.CURRENT) ? mode.REMAIN : mode.CURRENT;
+        localStorage.setItem('ytspCurrentMode', ytspCurrentMode);
         updateTimeDisplay()
     });
 
@@ -91,6 +93,14 @@ function createTimeDisplayTiny() {
 }
 
 function createTimeDisplayWide() {
+    const elPlayer = document.querySelector('#movie_player')
+    const elContainer = document.querySelector('#movie_player')?.closest('#container')
+
+    if (!elPlayer || !elContainer) {
+        console.log('NOT FOUND. ', 'Player: ', elPlayer, 'Container: ', elContainer);
+        return;
+    }
+
     const container = document.createElement('div');
     container.className = `${elementNames.container} ${elementNames.container}-wide`;
     container.style.position = 'absolute';
@@ -114,11 +124,12 @@ function createTimeDisplayWide() {
 
     container.appendChild(progressBar);
 
-    document.querySelector('#movie_player').closest('#container').appendChild(container);
+    elContainer.appendChild(container);
 }
 
 export function removeTimeDisplay() {
     let oldElements = document.querySelectorAll('.' + elementNames.container);
+
     if (oldElements.length > 0) {
         oldElements.forEach(el => el.remove());
     }
@@ -136,7 +147,7 @@ export function updateTimeDisplay() {
 
     if (timeText.length > 0 && progressBar.length > 0) {
         let text = ''
-        let textTime = currentMode === mode.REMAIN ? times.remain : times.current
+        let textTime = ytspCurrentMode === mode.REMAIN ? times.remain : times.current
 
         if (ytspSettings.tinyShowTime && ytspSettings.tinyShowPercent) {
             text = `${textTime} / ${times.total} (${times.percent}%)`
