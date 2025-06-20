@@ -1,4 +1,4 @@
-console.log("background.js loaded.")
+console.log("ytsp: background.js loaded.")
 
 let ytspGlobalRecentUrl = ''
 

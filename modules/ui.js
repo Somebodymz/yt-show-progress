@@ -8,7 +8,6 @@ const mode = {
 
 /** @type mode */
 let ytspCurrentMode = localStorage.getItem('ytspCurrentMode') ?? mode.CURRENT;
-console.log('ytspCurrentMode IS SET TO: ', ytspCurrentMode);
 
 const elementNames = {
     container: 'ytsp-container',
@@ -24,6 +23,22 @@ export function init() {
 
 export function disable() {
     removeTimeDisplay()
+}
+
+export function showTimer() {
+    let timer = document.querySelector('.ytsp-container-tiny')
+
+    if (timer) {
+        timer.style.display = 'block'
+    }
+}
+
+export function hideTimer() {
+    let timer = document.querySelector('.ytsp-container-tiny')
+
+    if (timer) {
+        timer.style.display = 'none'
+    }
 }
 
 export function createTimeDisplay() {
@@ -60,7 +75,7 @@ function createTimeDisplayTiny() {
     let timeText = document.createElement('div');
     timeText.className = elementNames.timeText;
     timeText.style.position = 'relative';
-    timeText.style.marginBottom = '2px';
+    timeText.style.marginBottom = '1px';
     timeText.style.cursor = 'pointer';
     timeText.textContent = '...';
     timeText.addEventListener('click', e => {
@@ -74,7 +89,7 @@ function createTimeDisplayTiny() {
     progressBar.style.position = 'absolute';
     progressBar.style.bottom = '0';
     progressBar.style.left = '0';
-    progressBar.style.height = ytspSettings.tinyFullBackground ? '100%' : '2px';
+    progressBar.style.height = ytspSettings.tinyFullBackground ? '100%' : ytspSettings.wideHeight;
     progressBar.style.background = 'red';
     progressBar.style.color = 'black';
     progressBar.style.width = '0%';
@@ -108,7 +123,8 @@ function createTimeDisplayWide() {
     container.style.right = '0';
     container.style.top = '100%';
     container.style.width = '100%';
-    container.style.height = '2px';
+    container.style.marginTop = `-${ytspSettings.wideHeight}`
+    container.style.height = ytspSettings.wideHeight;
     //container.style.zIndex = '9999';
     container.style.pointerEvents = 'none';
 

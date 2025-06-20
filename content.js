@@ -1,7 +1,8 @@
-console.log('content.js loaded.');
+console.log('ytsp: content.js loaded.');
 
 const ytspSettings = {
     wideEnabled: true,
+    wideHeight: '2px',
 
     tinyEnabled: true,
     tinyPosition: 'bottom',
@@ -38,4 +39,27 @@ browser.runtime.onMessage.addListener(async message => {
 
 function showProgressFor(url) {
     return !!(url.includes('youtube.com/watch') || url.includes('youtube.com/shorts'))
+}
+
+/**
+ * Watch fullscreen changes.
+ */
+document.addEventListener('fullscreenchange', async () => {
+    if (document.fullscreenElement) {
+        await handleFullscreenOn()
+    } else {
+        await handleFullscreenOff()
+    }
+});
+
+async function handleFullscreenOn() {
+    const ui = await import(browser.runtime.getURL('modules/ui.js'))
+
+    ui.hideTimer();
+}
+
+async function handleFullscreenOff() {
+    const ui = await import(browser.runtime.getURL('modules/ui.js'))
+
+    ui.showTimer();
 }
