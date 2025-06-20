@@ -3,6 +3,7 @@
   "name": "YouTube Show Progress",
   "version": "1.0",
   "description": "Display custom progress bar for YouTube videos.",
+  "license": "MIT",
   "permissions": [
     "activeTab",
     "tabs",
