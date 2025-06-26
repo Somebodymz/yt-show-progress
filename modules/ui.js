@@ -1,6 +1,9 @@
 /** @type {{formatTime:function}} */
 const utils = await import(browser.runtime.getURL('modules/utils.js'));
 
+const isMobile = location.hostname.startsWith('m.') ||
+    !!document.querySelector('ytm-app');
+
 const mode = {
     CURRENT: 'current',
     REMAIN: 'remain',
@@ -53,24 +56,35 @@ export function createTimeDisplay() {
 function createTimeDisplayTiny() {
     let container = document.createElement('div');
     container.className = `${elementNames.container} ${elementNames.container}-tiny`;
-    container.style.position = 'fixed';
     container.style.background = 'rgba(0, 0, 0, 0.7)';
     container.style.color = '#fff';
     container.style.padding = '4px 8px';
     container.style.borderRadius = '4px';
     container.style.fontSize = '14px';
     container.style.fontFamily = 'Arial, sans-serif';
-    //container.style.zIndex = '9999';
+    container.style.zIndex = '99';
     container.style.minWidth = '60px';
     container.style.textAlign = 'center';
     container.style.overflow = 'hidden';
-    if (ytspSettings.tinyPosition === 'top') {
-        container.style.top = '60px';
-        container.style.right = '10px';
-    } else {
-        container.style.bottom = '10px';
-        container.style.right = '10px';
+    if (isMobile){
+        container.style.position = 'absolute';
+        if (ytspSettings.tinyPosition === 'top') {
+            container.style.top = '60px';
+        } else {
+            container.style.top = '100%';
+            container.style.marginTop = '5px';
+            container.style.marginRight = '-5px';
+            container.style.opacity = '.75';
+        }
+    }else {
+        container.style.position = 'fixed';
+        if (ytspSettings.tinyPosition === 'top') {
+            container.style.top = '60px';
+        } else {
+            container.style.bottom = '10px';
+        }
     }
+    container.style.right = '10px';
 
     let timeText = document.createElement('div');
     timeText.className = elementNames.timeText;
@@ -104,15 +118,23 @@ function createTimeDisplayTiny() {
 
     container.appendChild(progressBar);
     container.appendChild(timeText);
-    document.body.appendChild(container);
+
+    const mobileVideoContainer = document.querySelector('#player-container-id');
+
+    if (isMobile && mobileVideoContainer) {
+        mobileVideoContainer.appendChild(container)
+    } else {
+        document.body.appendChild(container);
+    }
 }
 
 function createTimeDisplayWide() {
-    const elPlayer = document.querySelector('#movie_player')
-    const elContainer = document.querySelector('#movie_player')?.closest('#container')
+    const videoContainer = isMobile ?
+        document.querySelector('#player-container-id') :
+        document.querySelector('#movie_player')?.closest('#container')
 
-    if (!elPlayer || !elContainer) {
-        console.log('NOT FOUND. ', 'Player: ', elPlayer, 'Container: ', elContainer);
+    if (!videoContainer) {
+        console.log('ytsp: NOT FOUND video container: ', videoContainer);
         return;
     }
 
@@ -125,7 +147,6 @@ function createTimeDisplayWide() {
     container.style.width = '100%';
     container.style.marginTop = `-${ytspSettings.wideHeight}`
     container.style.height = ytspSettings.wideHeight;
-    //container.style.zIndex = '9999';
     container.style.pointerEvents = 'none';
 
     let progressBar = document.createElement('div');
@@ -140,7 +161,7 @@ function createTimeDisplayWide() {
 
     container.appendChild(progressBar);
 
-    elContainer.appendChild(container);
+    videoContainer.appendChild(container);
 }
 
 export function removeTimeDisplay() {
@@ -174,7 +195,7 @@ export function updateTimeDisplay() {
         }
 
         if (isNaN(times.percent)) {
-            text = 'Undefined. Try to reload.'
+            text = 'Loading...'
         }
 
         timeText.forEach(el => el.textContent = text);
