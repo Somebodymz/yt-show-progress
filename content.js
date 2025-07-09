@@ -23,6 +23,7 @@ const ytspSettings = {
 
     if (showProgressFor(location.href)) {
         ui.init()
+        await handleFullscreen();
     } else {
         ui.disable()
     }
@@ -46,23 +47,25 @@ function showProgressFor(url) {
     return !!(url.includes('youtube.com/watch') || url.includes('youtube.com/shorts'))
 }
 
-/**
- * Watch fullscreen changes.
- */
-document.addEventListener('fullscreenchange', async () => {
+async function handleFullscreen() {
     if (document.fullscreenElement) {
         await handleFullscreenOn()
     } else {
         await handleFullscreenOff()
     }
-});
+}
+
+/**
+ * Watch fullscreen changes.
+ */
+document.addEventListener('fullscreenchange', handleFullscreen);
 
 async function handleFullscreenOn() {
     const ui = await import(browser.runtime.getURL('modules/ui.js'))
 
     if (!isMobile) {
         ui.hideTimer();
-    }else{
+    } else {
         document.querySelector('.ytsp-container-tiny').style.marginTop = '-35px';
     }
 }
@@ -72,7 +75,7 @@ async function handleFullscreenOff() {
 
     if (!isMobile) {
         ui.showTimer();
-    }else{
+    } else {
         document.querySelector('.ytsp-container-tiny').style.marginTop = '5px';
     }
 }

@@ -4,10 +4,12 @@ const utils = await import(browser.runtime.getURL('modules/utils.js'));
 const mode = {
     CURRENT: 'current',
     REMAIN: 'remain',
+    CURRENT_ONLY: 'current_only',
+    REMAIN_ONLY: 'remain_only',
 }
 
-/** @type mode */
-let ytspCurrentMode = localStorage.getItem('ytspCurrentMode') ?? mode.CURRENT;
+/** @type string */
+let currentMode = localStorage.getItem('ytspCurrentMode') ?? mode.CURRENT;
 
 const elementNames = {
     container: 'ytsp-container',
@@ -60,7 +62,7 @@ function createTimeDisplayTiny() {
     container.style.fontSize = '14px';
     container.style.fontFamily = 'Arial, sans-serif';
     container.style.zIndex = '99';
-    container.style.minWidth = '60px';
+    container.style.minWidth = '12px';
     container.style.textAlign = 'center';
     container.style.overflow = 'hidden';
     if (isMobile) {
@@ -90,8 +92,9 @@ function createTimeDisplayTiny() {
     timeText.style.cursor = 'pointer';
     timeText.textContent = '...';
     timeText.addEventListener('click', e => {
-        ytspCurrentMode = (ytspCurrentMode === mode.CURRENT) ? mode.REMAIN : mode.CURRENT;
-        localStorage.setItem('ytspCurrentMode', ytspCurrentMode);
+        currentMode = nextMode();
+        console.log('current mode:', currentMode);
+        localStorage.setItem('ytspCurrentMode', currentMode);
         updateTimeDisplay()
     });
 
@@ -180,13 +183,21 @@ export function updateTimeDisplay() {
     }
 
     if (timeText.length > 0 && progressBar.length > 0) {
-        let text = ''
-        let textTime = ytspCurrentMode === mode.REMAIN ? times.remain : times.current
+        let text = '';
+
+        const modeToText = {
+            [mode.CURRENT]: `${times.current} / ${times.total}`,
+            [mode.REMAIN]: `${times.remain} / ${times.total}`,
+            [mode.CURRENT_ONLY]: `${times.current}`,
+            [mode.REMAIN_ONLY]: `${times.remain}`,
+        };
+
+        const timeLabel = modeToText[currentMode];
 
         if (ytspSettings.tinyShowTime && ytspSettings.tinyShowPercent) {
-            text = `${textTime} / ${times.total} (${times.percent}%)`
+            text = `${timeLabel} (${times.percent}%)`
         } else if (ytspSettings.tinyShowTime) {
-            text = `${textTime} / ${times.total}`
+            text = `${timeLabel}`
         } else if (ytspSettings.tinyShowPercent) {
             text = `${times.percent}%`
         }
@@ -226,4 +237,12 @@ function getVideoTime() {
 function round(value, decimals = 1) {
     const factor = Math.pow(10, decimals);
     return Math.round(value * factor) / factor;
+}
+
+function nextMode() {
+    const modeValues = Object.values(mode)
+    const currentIndex = modeValues.indexOf(currentMode);
+    const nextIndex = (currentIndex + 1) % modeValues.length;
+    currentMode = modeValues[nextIndex];
+    return currentMode;
 }
