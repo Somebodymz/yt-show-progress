@@ -1,9 +1,6 @@
 /** @type {{formatTime:function}} */
 const utils = await import(browser.runtime.getURL('modules/utils.js'));
 
-const isMobile = location.hostname.startsWith('m.') ||
-    !!document.querySelector('ytm-app');
-
 const mode = {
     CURRENT: 'current',
     REMAIN: 'remain',
@@ -66,7 +63,7 @@ function createTimeDisplayTiny() {
     container.style.minWidth = '60px';
     container.style.textAlign = 'center';
     container.style.overflow = 'hidden';
-    if (isMobile){
+    if (isMobile) {
         container.style.position = 'absolute';
         if (ytspSettings.tinyPosition === 'top') {
             container.style.top = '60px';
@@ -76,7 +73,7 @@ function createTimeDisplayTiny() {
             container.style.marginRight = '-5px';
             container.style.opacity = '.75';
         }
-    }else {
+    } else {
         container.style.position = 'fixed';
         if (ytspSettings.tinyPosition === 'top') {
             container.style.top = '60px';
@@ -129,9 +126,8 @@ function createTimeDisplayTiny() {
 }
 
 function createTimeDisplayWide() {
-    const videoContainer = isMobile ?
-        document.querySelector('#player-container-id') :
-        document.querySelector('#movie_player')?.closest('#container')
+    const videoContainerSelector = isMobile ? '#player-container-id' : '#movie_player';
+    const videoContainer = document.querySelector(videoContainerSelector);
 
     if (!videoContainer) {
         console.log('ytsp: NOT FOUND video container: ', videoContainer);
@@ -145,6 +141,7 @@ function createTimeDisplayWide() {
     container.style.right = '0';
     container.style.top = '100%';
     container.style.width = '100%';
+    container.style.zIndex = '10';
     container.style.marginTop = `-${ytspSettings.wideHeight}`
     container.style.height = ytspSettings.wideHeight;
     container.style.pointerEvents = 'none';
@@ -196,6 +193,7 @@ export function updateTimeDisplay() {
 
         if (isNaN(times.percent)) {
             text = 'Loading...'
+            console.log('ytsp: found video elements: ', document.querySelectorAll('video').length);
         }
 
         timeText.forEach(el => el.textContent = text);
@@ -204,7 +202,7 @@ export function updateTimeDisplay() {
 }
 
 function getVideoTime() {
-    let video = document.querySelector('video');
+    let video = document.querySelector('#movie_player video');
 
     let result = {
         current: '',

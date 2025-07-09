@@ -1,5 +1,10 @@
 console.log('ytsp: content.js loaded.');
 
+const ytspMutationObservers = {}
+
+const isMobile = location.hostname.startsWith('m.') ||
+    !!document.querySelector('ytm-app');
+
 const ytspSettings = {
     wideEnabled: true,
     wideHeight: '2px',
@@ -55,11 +60,21 @@ document.addEventListener('fullscreenchange', async () => {
 async function handleFullscreenOn() {
     const ui = await import(browser.runtime.getURL('modules/ui.js'))
 
-    ui.hideTimer();
+    if (!isMobile) {
+        ui.hideTimer();
+    }else{
+        document.querySelector('.ytsp-container-tiny').style.marginTop = '-35px';
+    }
 }
 
 async function handleFullscreenOff() {
     const ui = await import(browser.runtime.getURL('modules/ui.js'))
 
-    ui.showTimer();
+    if (!isMobile) {
+        ui.showTimer();
+    }else{
+        document.querySelector('.ytsp-container-tiny').style.marginTop = '5px';
+    }
 }
+
+//console.log( ytspMutationObservers );
