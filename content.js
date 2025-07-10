@@ -38,6 +38,7 @@ browser.runtime.onMessage.addListener(async message => {
 
     if (showProgressFor(message.url)) {
         ui.init()
+        await handleFullscreen();
     } else {
         ui.disable()
     }
