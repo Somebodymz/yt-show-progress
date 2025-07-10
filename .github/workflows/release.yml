@@ -16,7 +16,7 @@ jobs:
       - name: '🛠️ Set up Node.js'
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '12'
 
       - name: '🛠️ Install web-ext'
         run: npm install --global web-ext
