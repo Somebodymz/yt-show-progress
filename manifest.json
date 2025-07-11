@@ -36,6 +36,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "{fd9b9e87-abb3-4d33-aefc-e5bc64866f6e}"
-    }
+    },
+    "gecko_android": {}
   }
 }
