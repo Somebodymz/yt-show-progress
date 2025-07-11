@@ -10,26 +10,22 @@ jobs:
   sign-and-upload:
     runs-on: ubuntu-latest
     steps:
-      - name: '✅ Checkout code'
+      - name: 'Checkout code'
         uses: actions/checkout@v4
 
-      - name: '🛠️ Set up Node.js'
+      - name: 'Install Node.js'
         uses: actions/setup-node@v4
         with:
           node-version: '12'
 
-      - name: '🛠️ Install web-ext'
+      - name: 'Install web-ext'
         run: npm install --global web-ext
 
-      - name: '🛠️️ Sign the extension'
+      - name: 'Sign the extension'
         run: |
-          web-ext sign \
-            --api-key="${{ secrets.AMO_API_KEY }}" \
-            --api-secret="${{ secrets.AMO_API_SECRET }}" \
-            --artifacts-dir=web-ext-artifacts \
-            --channel=listed
+          web-ext sign --api-key="${{ secrets.AMO_API_KEY }}" --api-secret="${{ secrets.AMO_API_SECRET }}" --channel=listed --artifacts-dir=web-ext-artifacts
 
-      - name: '📤 Upload signed .xpi to GitHub Release'
+      - name: 'Upload signed .xpi to GitHub Release'
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
