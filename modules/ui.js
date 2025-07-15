@@ -213,7 +213,7 @@ export function updateTimeDisplay() {
 }
 
 function getVideoTime() {
-    let video = document.querySelector('#movie_player video');
+    let video = document.querySelector('video[src]');
 
     let result = {
         current: '',
