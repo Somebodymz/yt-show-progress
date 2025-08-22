@@ -15,6 +15,7 @@ const elementNames = {
     container: 'ytsp-container',
     timeText: 'ytsp-time-text',
     progressBar: 'ytsp-progress-bar',
+    chapterText: 'ytsp-chapter-title',
 }
 
 export function init() {
@@ -90,13 +91,15 @@ function createTimeDisplayTiny() {
     timeText.style.position = 'relative';
     timeText.style.marginBottom = '1px';
     timeText.style.cursor = 'pointer';
-    timeText.textContent = '...';
     timeText.addEventListener('click', e => {
         currentMode = nextMode();
         console.log('current mode:', currentMode);
         localStorage.setItem('ytspCurrentMode', currentMode);
         updateTimeDisplay()
     });
+
+    const videoInfo = getVideoInfo();
+    timeText.textContent = videoInfo.total;
 
     let progressBar = document.createElement('div');
     progressBar.className = `${elementNames.progressBar} ${elementNames.progressBar}-tiny`;
@@ -159,7 +162,22 @@ function createTimeDisplayWide() {
     progressBar.style.color = 'black';
     progressBar.style.width = '0%';
 
+    let chapterContainer = document.querySelector('.ytp-chapter-title-content');
+    let chapterText = document.createElement('div');
+    chapterText.className = `${elementNames.chapterText} ${elementNames.chapterText}-wide`;
+    chapterText.style.position = 'absolute';
+    chapterText.style.bottom = '0';
+    chapterText.style.left = '0';
+    chapterText.style.padding = '.75em 1em';
+    if (isMobile) {
+        chapterText.style.fontSize = '12px';
+    } else {
+        chapterText.style.fontSize = '14px';
+    }
+    chapterText.textContent = chapterContainer && chapterContainer.textContent ? chapterContainer.textContent : '';
+
     container.appendChild(progressBar);
+    container.appendChild(chapterText);
 
     videoContainer.appendChild(container);
 }
@@ -173,36 +191,41 @@ export function removeTimeDisplay() {
 }
 
 export function updateTimeDisplay() {
-    let timeText = document.querySelectorAll('.' + elementNames.timeText);
     let progressBar = document.querySelectorAll('.' + elementNames.progressBar);
+    let timeText = document.querySelectorAll('.' + elementNames.timeText);
+    let currentChapter = document.querySelector('.ytp-chapter-title-content');
 
-    let times = getVideoTime()
+    let videoStatus = getVideoInfo()
+
+    if (videoStatus.paused) {
+        return;
+    }
 
     if (progressBar.length > 0) {
-        progressBar.forEach(el => el.style.width = `${times.percent}%`);
+        progressBar.forEach(el => el.style.width = `${videoStatus.percent}%`);
     }
 
     if (timeText.length > 0 && progressBar.length > 0) {
         let text = '';
 
         const modeToText = {
-            [mode.CURRENT]: `${times.current} / ${times.total}`,
-            [mode.REMAIN]: `${times.remain} / ${times.total}`,
-            [mode.CURRENT_ONLY]: `${times.current}`,
-            [mode.REMAIN_ONLY]: `${times.remain}`,
+            [mode.CURRENT]: `${videoStatus.current} / ${videoStatus.total}`,
+            [mode.REMAIN]: `${videoStatus.remain} / ${videoStatus.total}`,
+            [mode.CURRENT_ONLY]: `${videoStatus.current}`,
+            [mode.REMAIN_ONLY]: `${videoStatus.remain}`,
         };
 
         const timeLabel = modeToText[currentMode];
 
         if (ytspSettings.tinyShowTime && ytspSettings.tinyShowPercent) {
-            text = `${timeLabel} (${times.percent}%)`
+            text = `${timeLabel} (${videoStatus.percent}%)`
         } else if (ytspSettings.tinyShowTime) {
             text = `${timeLabel}`
         } else if (ytspSettings.tinyShowPercent) {
-            text = `${times.percent}%`
+            text = `${videoStatus.percent}%`
         }
 
-        if (isNaN(times.percent)) {
+        if (isNaN(videoStatus.percent)) {
             text = 'Loading...'
             console.log('ytsp: found video elements: ', document.querySelectorAll('video').length);
         }
@@ -210,9 +233,16 @@ export function updateTimeDisplay() {
         timeText.forEach(el => el.textContent = text);
         progressBar.forEach(el => el.textContent = el.className.includes('tiny') ? text : '')
     }
+
+    let chapterText = document.querySelector('.' + elementNames.chapterText);
+    if (currentChapter && currentChapter.textContent) {
+        chapterText.textContent = chapterText ? currentChapter.textContent : '';
+    } else {
+        chapterText.textContent = '';
+    }
 }
 
-function getVideoTime() {
+function getVideoInfo() {
     let video = document.querySelector('video[src]');
 
     let result = {
@@ -220,6 +250,7 @@ function getVideoTime() {
         remain: '',
         total: '',
         percent: 0,
+        paused: undefined,
     }
 
     if (video) {
@@ -228,6 +259,7 @@ function getVideoTime() {
             remain: '-' + utils.formatTime(video.duration - video.currentTime),
             total: utils.formatTime(video.duration),
             percent: round((video.currentTime / video.duration) * 100),
+            paused: video.paused,
         }
     }
 
