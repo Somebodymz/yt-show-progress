@@ -1,25 +1,22 @@
 console.log('ytsp: content.js loaded.');
 
-const ytspMutationObservers = {}
+const isMobile = location.hostname.startsWith('m.') || !!document.querySelector('ytm-app');
 
-const isMobile = location.hostname.startsWith('m.') ||
-    !!document.querySelector('ytm-app');
-
-const ytspSettings = {
-    wideEnabled: true,
-    wideHeight: '2px',
-
-    tinyEnabled: true,
-    tinyPosition: 'bottom',
-    tinyFullBackground: true,
-    tinyShowTime: true,
-    tinyShowPercent: false,
-};
+let globalSettings = {};
 
 (async () => {
     'use strict';
 
-    const ui = await import(browser.runtime.getURL('modules/ui.js'))
+    const ui = await import(browser.runtime.getURL('modules/ui.js'));
+
+    globalSettings = (await import(browser.runtime.getURL('modules/settings.js'))).default;
+    const savedSettings = (await browser.storage.local.get('settings'))["settings"] || {};
+    if (savedSettings) {
+        globalSettings = {
+            ...globalSettings,
+            ...savedSettings
+        }
+    }
 
     if (showProgressFor(location.href)) {
         ui.init()
@@ -30,7 +27,7 @@ const ytspSettings = {
 })();
 
 browser.runtime.onMessage.addListener(async message => {
-    if (message.type !== 'ytsp-url-changed') {
+    if (message.type !== 'ytspUrlChanged') {
         return;
     }
 
@@ -80,5 +77,3 @@ async function handleFullscreenOff() {
         document.querySelector('.ytsp-container-tiny').style.marginTop = '5px';
     }
 }
-
-//console.log( ytspMutationObservers );

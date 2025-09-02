@@ -6,6 +6,7 @@ const mode = {
     REMAIN: 'remain',
     CURRENT_ONLY: 'current_only',
     REMAIN_ONLY: 'remain_only',
+    //REMAIN_CURRENT: 'remain_current',
 }
 
 /** @type string */
@@ -15,17 +16,17 @@ const elementNames = {
     container: 'ytsp-container',
     timeText: 'ytsp-time-text',
     progressBar: 'ytsp-progress-bar',
-    chapterText: 'ytsp-chapter-title',
+    chaptersText: 'ytsp-chapter-title',
 }
 
 export function init() {
-    removeTimeDisplay()
-    createTimeDisplay()
+    removeElements()
+    createElements()
     setInterval(updateTimeDisplay, 500)
 }
 
 export function disable() {
-    removeTimeDisplay()
+    removeElements()
 }
 
 export function showTimer() {
@@ -44,16 +45,16 @@ export function hideTimer() {
     }
 }
 
-export function createTimeDisplay() {
-    if (ytspSettings.tinyEnabled) {
-        createTimeDisplayTiny()
-    }
-    if (ytspSettings.wideEnabled) {
-        createTimeDisplayWide()
-    }
+export function createElements() {
+    createTimer()
+    createProgressbar()
 }
 
-function createTimeDisplayTiny() {
+function createTimer() {
+    if (!globalSettings.timerEnabled) {
+        return;
+    }
+
     let container = document.createElement('div');
     container.className = `${elementNames.container} ${elementNames.container}-tiny`;
     container.style.background = 'rgba(0, 0, 0, 0.7)';
@@ -68,7 +69,7 @@ function createTimeDisplayTiny() {
     container.style.overflow = 'hidden';
     if (isMobile) {
         container.style.position = 'absolute';
-        if (ytspSettings.tinyPosition === 'top') {
+        if (globalSettings.timerPosition === 'top') {
             container.style.top = '60px';
         } else {
             container.style.top = '100%';
@@ -78,7 +79,7 @@ function createTimeDisplayTiny() {
         }
     } else {
         container.style.position = 'fixed';
-        if (ytspSettings.tinyPosition === 'top') {
+        if (globalSettings.timerPosition === 'top') {
             container.style.top = '60px';
         } else {
             container.style.bottom = '10px';
@@ -93,7 +94,6 @@ function createTimeDisplayTiny() {
     timeText.style.cursor = 'pointer';
     timeText.addEventListener('click', e => {
         currentMode = nextMode();
-        console.log('current mode:', currentMode);
         localStorage.setItem('ytspCurrentMode', currentMode);
         updateTimeDisplay()
     });
@@ -106,11 +106,11 @@ function createTimeDisplayTiny() {
     progressBar.style.position = 'absolute';
     progressBar.style.bottom = '0';
     progressBar.style.left = '0';
-    progressBar.style.height = ytspSettings.tinyFullBackground ? '100%' : ytspSettings.wideHeight;
+    progressBar.style.height = globalSettings.timerFullBackground ? '100%' : globalSettings.progressbarHeight;
     progressBar.style.background = 'red';
     progressBar.style.color = 'black';
     progressBar.style.width = '0%';
-    if (ytspSettings.tinyFullBackground) {
+    if (globalSettings.timerFullBackground) {
         progressBar.style.whiteSpace = 'nowrap';
         progressBar.style.lineHeight = '27px';
         progressBar.style.textIndent = '9px';
@@ -131,7 +131,36 @@ function createTimeDisplayTiny() {
     }
 }
 
-function createTimeDisplayWide() {
+/**
+ *
+ * @returns {HTMLElement}
+ */
+function createChapters() {
+    let currentChapterTitle = document.querySelector('.ytp-chapter-title-content');
+    let chaptersText = document.createElement('div');
+
+    chaptersText.className = `${elementNames.chaptersText} ${elementNames.chaptersText}-wide`;
+    chaptersText.style.position = 'absolute';
+    chaptersText.style.bottom = '0';
+    chaptersText.style.left = '0';
+    chaptersText.style.margin = '.75em 1em .85em';
+    //chaptersText.style.padding = '0 .2em';
+    chaptersText.style.color = '#eeeeee';
+    //chaptersText.style.textShadow = '1px 1px 3px #000000';
+    chaptersText.style.backgroundColor = 'rgba(256,256,256,0.15)';
+
+    if (isMobile) {
+        chaptersText.style.fontSize = '12px';
+    } else {
+        chaptersText.style.fontSize = '14px';
+    }
+
+    chaptersText.textContent = currentChapterTitle && currentChapterTitle.textContent ? currentChapterTitle.textContent : '';
+
+    return chaptersText;
+}
+
+function createProgressbar() {
     const videoContainerSelector = isMobile ? '#player-container-id' : '#movie_player';
     const videoContainer = document.querySelector(videoContainerSelector);
 
@@ -148,41 +177,31 @@ function createTimeDisplayWide() {
     container.style.top = '100%';
     container.style.width = '100%';
     container.style.zIndex = '10';
-    container.style.marginTop = `-${ytspSettings.wideHeight}`
-    container.style.height = ytspSettings.wideHeight;
+    container.style.marginTop = `-${globalSettings.progressbarHeight}`
+    container.style.height = globalSettings.progressbarHeight;
     container.style.pointerEvents = 'none';
 
-    let progressBar = document.createElement('div');
-    progressBar.className = `${elementNames.progressBar} ${elementNames.progressBar}-wide`;
-    progressBar.style.position = 'absolute';
-    progressBar.style.bottom = '0';
-    progressBar.style.left = '0';
-    progressBar.style.height = '100%';
-    progressBar.style.background = 'red';
-    progressBar.style.color = 'black';
-    progressBar.style.width = '0%';
-
-    let chapterContainer = document.querySelector('.ytp-chapter-title-content');
-    let chapterText = document.createElement('div');
-    chapterText.className = `${elementNames.chapterText} ${elementNames.chapterText}-wide`;
-    chapterText.style.position = 'absolute';
-    chapterText.style.bottom = '0';
-    chapterText.style.left = '0';
-    chapterText.style.padding = '.75em 1em';
-    if (isMobile) {
-        chapterText.style.fontSize = '12px';
-    } else {
-        chapterText.style.fontSize = '14px';
+    if (globalSettings.progressbarEnabled) {
+        let progressbar = document.createElement('div');
+        progressbar.className = `${elementNames.progressBar} ${elementNames.progressBar}-wide`;
+        progressbar.style.position = 'absolute';
+        progressbar.style.bottom = '0';
+        progressbar.style.left = '0';
+        progressbar.style.height = '100%';
+        progressbar.style.background = globalSettings.progressbarColor;
+        progressbar.style.color = 'black';
+        progressbar.style.width = '0%';
+        container.appendChild(progressbar);
     }
-    chapterText.textContent = chapterContainer && chapterContainer.textContent ? chapterContainer.textContent : '';
 
-    container.appendChild(progressBar);
-    container.appendChild(chapterText);
+    if (globalSettings.chaptersEnabled) {
+        container.appendChild(createChapters());
+    }
 
     videoContainer.appendChild(container);
 }
 
-export function removeTimeDisplay() {
+export function removeElements() {
     let oldElements = document.querySelectorAll('.' + elementNames.container);
 
     if (oldElements.length > 0) {
@@ -217,28 +236,27 @@ export function updateTimeDisplay() {
 
         const timeLabel = modeToText[currentMode];
 
-        if (ytspSettings.tinyShowTime && ytspSettings.tinyShowPercent) {
+        if (globalSettings.timerShowTime && globalSettings.timerShowPercent) {
             text = `${timeLabel} (${videoStatus.percent}%)`
-        } else if (ytspSettings.tinyShowTime) {
+        } else if (globalSettings.timerShowTime) {
             text = `${timeLabel}`
-        } else if (ytspSettings.tinyShowPercent) {
+        } else if (globalSettings.timerShowPercent) {
             text = `${videoStatus.percent}%`
         }
 
         if (isNaN(videoStatus.percent)) {
             text = 'Loading...'
-            console.log('ytsp: found video elements: ', document.querySelectorAll('video').length);
         }
 
         timeText.forEach(el => el.textContent = text);
         progressBar.forEach(el => el.textContent = el.className.includes('tiny') ? text : '')
     }
 
-    let chapterText = document.querySelector('.' + elementNames.chapterText);
+    let chaptersText = document.querySelector('.' + elementNames.chaptersText);
     if (currentChapter && currentChapter.textContent) {
-        chapterText.textContent = chapterText ? currentChapter.textContent : '';
+        chaptersText.textContent = chaptersText ? currentChapter.textContent : '';
     } else {
-        chapterText.textContent = '';
+        chaptersText.textContent = '';
     }
 }
 

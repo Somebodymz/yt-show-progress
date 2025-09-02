@@ -1,17 +1,18 @@
 console.log("ytsp: background.js loaded.")
 
-let ytspGlobalRecentUrl = ''
+let globalRecentUrl = ''
 
 browser.webNavigation.onHistoryStateUpdated.addListener(details => {
+    console.log('ytsp: background.js: ', details)
     if (details.frameId !== 0) {
         return;
     }
 
     browser.tabs.sendMessage(details.tabId, {
-        type: 'ytsp-url-changed',
+        type: 'ytspUrlChanged',
         url: details.url,
-        prevUrl: ytspGlobalRecentUrl
+        prevUrl: globalRecentUrl
     });
 
-    ytspGlobalRecentUrl = details.url
+    globalRecentUrl = details.url
 });

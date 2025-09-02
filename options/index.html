@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <link type="text/css" rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="script.js"></script>
+
+    <title>YouTube Show Progress Settings</title>
+</head>
+<body>
+
+<form>
+    <div class="group">
+        <input type="checkbox" id="progressbarEnabled" name="progressbarEnabled" checked class="saveable" />
+        <label for="progressbarEnabled">Show progress bar</label>
+
+        <div class="sub"></div>
+    </div>
+
+    <div>
+        <input type="checkbox" id="timerEnabled" name="timerEnabled" checked class="saveable">
+        <label for="timerEnabled">Show time counter</label>
+
+        <div class="sub"></div>
+    </div>
+
+    <div>
+        <input type="checkbox" id="chaptersEnabled" name="chapterEnabled" checked class="saveable">
+        <label for="chaptersEnabled">Show current chapter</label>
+    </div>
+</form>
+
+<p id="status"></p>
+
+</body>
+</html>

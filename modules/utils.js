@@ -30,8 +30,6 @@ export function waitForElement(selector, timeout = 10000) {
             }
         });
 
-        ytspMutationObservers['waitForElement'] = observer;
-
         observer.observe(document.documentElement, {
             childList: true,
             subtree: true,
