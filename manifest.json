@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "YouTube Show Progress",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Display custom progress bar for YouTube videos.",
   "permissions": [
     "activeTab",
