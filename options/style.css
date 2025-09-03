@@ -5,7 +5,7 @@ body {
     background: #f9f9f9;
     color: #1a1a1a;
     font-family: sans-serif;
-    font-size: 1rem;
+    font-size: 1.1rem;
 }
 
 h1, h2, h3 {
@@ -42,8 +42,8 @@ select {
 
 input[type="checkbox"],
 input[type="radio"] {
-    width: 16px;
-    height: 16px;
+    width: 1.1rem;
+    height: 1.1rem;
     vertical-align: middle;
     margin-right: 4px;
 }
@@ -71,7 +71,7 @@ form {
     max-width: 600px;
 }
 
-/** custom **/
+/** styles **/
 
 input[type="checkbox"] + label {
     vertical-align: middle;
