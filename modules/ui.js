@@ -136,26 +136,21 @@ function createTimer() {
  * @returns {HTMLElement}
  */
 function createChapters() {
-    let currentChapterTitle = document.querySelector('.ytp-chapter-title-content');
     let chaptersText = document.createElement('div');
+    let currentChapter = !isMobile ?
+        document.querySelector('.ytp-chapter-title-content') :
+        document.querySelector('.ytwPlayerTimeDisplayTimeMacro .yt-core-attributed-string');
 
     chaptersText.className = `${elementNames.chaptersText} ${elementNames.chaptersText}-wide`;
     chaptersText.style.position = 'absolute';
     chaptersText.style.bottom = '0';
     chaptersText.style.left = '0';
     chaptersText.style.margin = '.75em 1em .85em';
-    //chaptersText.style.padding = '0 .2em';
     chaptersText.style.color = '#eeeeee';
-    //chaptersText.style.textShadow = '1px 1px 3px #000000';
     chaptersText.style.backgroundColor = 'rgba(256,256,256,0.15)';
+    chaptersText.style.fontSize = isMobile ? '1.15em' : '14px';
 
-    if (isMobile) {
-        chaptersText.style.fontSize = '12px';
-    } else {
-        chaptersText.style.fontSize = '14px';
-    }
-
-    chaptersText.textContent = currentChapterTitle && currentChapterTitle.textContent ? currentChapterTitle.textContent : '';
+    chaptersText.textContent = currentChapter && currentChapter.textContent ? currentChapter.textContent : '';
 
     return chaptersText;
 }
@@ -212,7 +207,9 @@ export function removeElements() {
 export function updateTimeDisplay() {
     let progressBar = document.querySelectorAll('.' + elementNames.progressBar);
     let timeText = document.querySelectorAll('.' + elementNames.timeText);
-    let currentChapter = document.querySelector('.ytp-chapter-title-content');
+    let currentChapter = !isMobile ?
+        document.querySelector('.ytp-chapter-title-content') :
+        document.querySelector('.ytwPlayerTimeDisplayTimeMacro .yt-core-attributed-string');
 
     let videoStatus = getVideoInfo()
 
