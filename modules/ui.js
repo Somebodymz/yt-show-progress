@@ -132,23 +132,30 @@ function createTimer() {
 }
 
 /**
+ * @returns {Element}
+ */
+function selectCurrentChapter() {
+    return !isMobile ?
+        document.querySelector('.ytp-chapter-title-content') :
+        document.querySelector('.ytwPlayerTimeDisplayChapterButton');
+}
+
+/**
  *
  * @returns {HTMLElement}
  */
 function createChapters() {
     let chaptersText = document.createElement('div');
-    let currentChapter = !isMobile ?
-        document.querySelector('.ytp-chapter-title-content') :
-        document.querySelector('.ytwPlayerTimeDisplayTimeMacro .yt-core-attributed-string');
+    let currentChapter = selectCurrentChapter();
 
     chaptersText.className = `${elementNames.chaptersText} ${elementNames.chaptersText}-wide`;
     chaptersText.style.position = 'absolute';
     chaptersText.style.bottom = '0';
     chaptersText.style.left = '0';
-    chaptersText.style.margin = '.75em 1em .85em';
+    chaptersText.style.padding = isMobile ? '.3em .25em' : '.75em 1em .85em';
     chaptersText.style.color = '#eeeeee';
     chaptersText.style.backgroundColor = 'rgba(256,256,256,0.15)';
-    chaptersText.style.fontSize = isMobile ? '1.15em' : '14px';
+    chaptersText.style.fontSize = isMobile ? '1em' : '14px';
 
     chaptersText.textContent = currentChapter && currentChapter.textContent ? currentChapter.textContent : '';
 
@@ -207,9 +214,7 @@ export function removeElements() {
 export function updateTimeDisplay() {
     let progressBar = document.querySelectorAll('.' + elementNames.progressBar);
     let timeText = document.querySelectorAll('.' + elementNames.timeText);
-    let currentChapter = !isMobile ?
-        document.querySelector('.ytp-chapter-title-content') :
-        document.querySelector('.ytwPlayerTimeDisplayTimeMacro .yt-core-attributed-string');
+    let currentChapter = selectCurrentChapter();
 
     let videoStatus = getVideoInfo()
 
