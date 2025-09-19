@@ -19,7 +19,7 @@ jobs:
           node-version: '12'
 
       - name: 'Install web-ext'
-        run: npm install --global web-ext
+        run: npm install --global web-ext@6.8.0
 
       - name: 'Sign the extension'
         run: |
