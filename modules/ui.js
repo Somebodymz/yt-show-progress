@@ -152,10 +152,14 @@ function createChapters() {
     chaptersText.style.position = 'absolute';
     chaptersText.style.bottom = '0';
     chaptersText.style.left = '0';
-    chaptersText.style.padding = isMobile ? '.3em .25em' : '.75em 1em .85em';
+    chaptersText.style.padding = isMobile ? '.33em .40em' : '.75em 1em .85em';
     chaptersText.style.color = '#eeeeee';
     chaptersText.style.backgroundColor = 'rgba(256,256,256,0.15)';
-    chaptersText.style.fontSize = isMobile ? '1em' : '14px';
+    chaptersText.style.fontSize = isMobile ? '1.5em' : '14px';
+
+    if (isMobile){
+        chaptersText.style.paddingLeft = 'max(1.1em, env(safe-area-inset-left))';
+    }
 
     chaptersText.textContent = currentChapter && currentChapter.textContent ? currentChapter.textContent : '';
 
