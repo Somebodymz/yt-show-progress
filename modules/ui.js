@@ -89,9 +89,6 @@ function createTimer() {
         updateTimeDisplay()
     });
 
-    const videoInfo = getVideoInfo();
-    timeText.textContent = videoInfo.total;
-
     let progressBar = document.createElement('div');
     progressBar.className = `${elementNames.progressBar} ${elementNames.progressBar}-tiny`;
     progressBar.style.height = globalSettings.timerFullBackground ? '100%' : globalSettings.progressbarHeight;
@@ -115,6 +112,8 @@ function createTimer() {
     } else {
         document.body.appendChild(container);
     }
+
+    updateTimeDisplay(true);
 }
 
 /**
@@ -187,12 +186,12 @@ export function removeElements() {
     }
 }
 
-export function updateTimeDisplay() {
+export function updateTimeDisplay(forced = false) {
     let progressBar = document.querySelectorAll('.' + elementNames.progressBar);
     let timeText = document.querySelectorAll('.' + elementNames.timeText);
-    let videoStatus = getVideoInfo()
+    const videoStatus = getVideoInfo()
 
-    if (videoStatus.paused) {
+    if (videoStatus.paused && !forced) {
         return;
     }
 
