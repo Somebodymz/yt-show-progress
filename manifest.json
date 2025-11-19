@@ -16,12 +16,15 @@
   },
   "content_scripts": [
     {
-      "js": [
-        "content.js"
-      ],
       "matches": [
         "*://www.youtube.com/*",
         "*://m.youtube.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
       ]
     }
   ],

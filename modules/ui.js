@@ -57,16 +57,7 @@ function createTimer() {
 
     let container = document.createElement('div');
     container.className = `${elementNames.container} ${elementNames.container}-tiny`;
-    container.style.background = 'rgba(0, 0, 0, 0.7)';
-    container.style.color = '#fff';
-    container.style.padding = '4px 8px';
-    container.style.borderRadius = '4px';
-    container.style.fontSize = '14px';
-    container.style.fontFamily = 'Arial, sans-serif';
-    container.style.zIndex = '99';
-    container.style.minWidth = '12px';
-    container.style.textAlign = 'center';
-    container.style.overflow = 'hidden';
+
     if (isMobile) {
         container.style.position = 'absolute';
         if (globalSettings.timerPosition === 'top') {
@@ -103,13 +94,8 @@ function createTimer() {
 
     let progressBar = document.createElement('div');
     progressBar.className = `${elementNames.progressBar} ${elementNames.progressBar}-tiny`;
-    progressBar.style.position = 'absolute';
-    progressBar.style.bottom = '0';
-    progressBar.style.left = '0';
     progressBar.style.height = globalSettings.timerFullBackground ? '100%' : globalSettings.progressbarHeight;
-    progressBar.style.background = 'red';
-    progressBar.style.color = 'black';
-    progressBar.style.width = '0%';
+
     if (globalSettings.timerFullBackground) {
         progressBar.style.whiteSpace = 'nowrap';
         progressBar.style.lineHeight = '27px';
@@ -142,28 +128,26 @@ function selectCurrentChapter() {
 
 /**
  *
- * @returns {HTMLElement}
+ * @returns {Node[]}
  */
 function createChapters() {
     let chaptersText = document.createElement('div');
     let currentChapter = selectCurrentChapter();
 
-    chaptersText.className = `${elementNames.chaptersText} ${elementNames.chaptersText}-wide`;
-    chaptersText.style.position = 'absolute';
-    chaptersText.style.bottom = '0';
-    chaptersText.style.left = '0';
+    chaptersText.className = `${elementNames.chaptersText}`;
     chaptersText.style.padding = isMobile ? '.33em .40em' : '.75em 1em .85em';
-    chaptersText.style.color = '#eeeeee';
-    chaptersText.style.backgroundColor = 'rgba(256,256,256,0.15)';
     chaptersText.style.fontSize = isMobile ? '1.5em' : '14px';
 
-    if (isMobile){
+    if (isMobile) {
         chaptersText.style.paddingLeft = 'max(1.1em, env(safe-area-inset-left))';
     }
 
     chaptersText.textContent = currentChapter && currentChapter.textContent ? currentChapter.textContent : '';
 
-    return chaptersText;
+    let chaptersText2 = chaptersText.cloneNode(true);
+    chaptersText2.classList.add(`${elementNames.chaptersText}-shadow`);
+
+    return [chaptersText2, chaptersText];
 }
 
 function createProgressbar() {
@@ -177,31 +161,19 @@ function createProgressbar() {
 
     const container = document.createElement('div');
     container.className = `${elementNames.container} ${elementNames.container}-wide`;
-    container.style.position = 'absolute';
-    container.style.left = '0';
-    container.style.right = '0';
-    container.style.top = '100%';
-    container.style.width = '100%';
-    container.style.zIndex = '10';
     container.style.marginTop = `-${globalSettings.progressbarHeight}`
     container.style.height = globalSettings.progressbarHeight;
-    container.style.pointerEvents = 'none';
 
     if (globalSettings.progressbarEnabled) {
         let progressbar = document.createElement('div');
         progressbar.className = `${elementNames.progressBar} ${elementNames.progressBar}-wide`;
-        progressbar.style.position = 'absolute';
-        progressbar.style.bottom = '0';
-        progressbar.style.left = '0';
-        progressbar.style.height = '100%';
         progressbar.style.background = globalSettings.progressbarColor;
-        progressbar.style.color = 'black';
-        progressbar.style.width = '0%';
+
         container.appendChild(progressbar);
     }
 
     if (globalSettings.chaptersEnabled) {
-        container.appendChild(createChapters());
+        container.append(...createChapters());
     }
 
     videoContainer.appendChild(container);
@@ -218,8 +190,6 @@ export function removeElements() {
 export function updateTimeDisplay() {
     let progressBar = document.querySelectorAll('.' + elementNames.progressBar);
     let timeText = document.querySelectorAll('.' + elementNames.timeText);
-    let currentChapter = selectCurrentChapter();
-
     let videoStatus = getVideoInfo()
 
     if (videoStatus.paused) {
@@ -258,11 +228,15 @@ export function updateTimeDisplay() {
         progressBar.forEach(el => el.textContent = el.className.includes('tiny') ? text : '')
     }
 
-    let chaptersText = document.querySelector('.' + elementNames.chaptersText);
-    if (currentChapter && currentChapter.textContent) {
-        chaptersText.textContent = chaptersText ? currentChapter.textContent : '';
-    } else {
-        chaptersText.textContent = '';
+    if (globalSettings.chaptersEnabled) {
+        let chaptersText = document.querySelectorAll('.' + elementNames.chaptersText);
+        let currentChapter = selectCurrentChapter();
+
+        if (currentChapter && currentChapter.textContent) {
+            chaptersText.forEach(el => el.textContent = currentChapter.textContent);
+        } else {
+            chaptersText.forEach(el => el.textContent = '');
+        }
     }
 }
 

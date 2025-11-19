@@ -1,0 +1,59 @@
+.ytsp-container-tiny {
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    z-index: 99;
+    min-width: 12px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.ytsp-container-wide {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    width: 100%;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.ytsp-progress-bar-tiny {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: red;
+    color: black;
+    width: 0;
+}
+
+.ytsp-progress-bar-wide {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    color: black;
+    width: 0;
+}
+
+
+.ytsp-chapter-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: #eeeeee;
+    /*background-color: rgba(256, 256, 256, 0.15);*/
+}
+
+.ytsp-chapter-title-shadow {
+    margin-left: 1px;
+    margin-bottom: -1px;
+    color: #0c0c0d !important;
+}
+
+.ytsp-chapter-title:empty {
+    display: none;
+}
