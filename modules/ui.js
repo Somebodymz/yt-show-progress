@@ -143,10 +143,10 @@ function createChapters() {
 
     chaptersText.textContent = currentChapter && currentChapter.textContent ? currentChapter.textContent : '';
 
-    let chaptersText2 = chaptersText.cloneNode(true);
-    chaptersText2.classList.add(`${elementNames.chaptersText}-shadow`);
+    //let chaptersText2 = chaptersText.cloneNode(true);
+    //chaptersText2.classList.add(`${elementNames.chaptersText}-shadow`);
 
-    return [chaptersText2, chaptersText];
+    return [chaptersText];
 }
 
 function createProgressbar() {

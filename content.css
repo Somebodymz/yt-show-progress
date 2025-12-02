@@ -46,12 +46,12 @@
     left: 0;
     color: #eeeeee;
     /*background-color: rgba(256, 256, 256, 0.15);*/
-}
-
-.ytsp-chapter-title-shadow {
-    margin-left: 1px;
-    margin-bottom: -1px;
-    color: #0c0c0d !important;
+    font-weight: bold;
+    text-shadow:
+        -1px -1px 1px #404040,
+        1px -1px 1px #404040,
+        -1px 1px 1px #404040,
+        1px 1px 1px #404040;
 }
 
 .ytsp-chapter-title:empty {
