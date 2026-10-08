@@ -122,7 +122,7 @@ function createTimer() {
 function selectCurrentChapter() {
     return !isMobile ?
         document.querySelector('.ytp-chapter-title-content') :
-        document.querySelector('.ytwPlayerTimeDisplayChapterButton');
+        document.querySelector('.ytwPlayerTimeDisplayPlayerBarButton');
 }
 
 /**
@@ -142,9 +142,6 @@ function createChapters() {
     }
 
     chaptersText.textContent = currentChapter && currentChapter.textContent ? currentChapter.textContent : '';
-
-    //let chaptersText2 = chaptersText.cloneNode(true);
-    //chaptersText2.classList.add(`${elementNames.chaptersText}-shadow`);
 
     return [chaptersText];
 }
