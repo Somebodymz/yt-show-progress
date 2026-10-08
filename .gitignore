@@ -1,4 +1,11 @@
 .idea
+
+/node_modules
+.env
+.env.local
+.env.*.local
+
 web-ext-artifacts
 web-ext-scripts
 .web-extension-id
+.amo-upload-uuid

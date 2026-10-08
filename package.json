@@ -1,0 +1,18 @@
+{
+  "name": "yt-show-progress",
+  "version": "1.0.0",
+  "description": "Display custom progress bar for YouTube videos.",
+  "scripts": {
+    "publish": "dotenv -e .env -- cross-var web-ext sign --api-key=%AMO_API_KEY% --api-secret=%AMO_API_SECRET% --channel=listed --timeout=60000 --artifacts-dir=web-ext-artifacts",
+    "publish:private": "dotenv -e .env -- cross-var web-ext sign --api-key=%AMO_API_KEY% --api-secret=%AMO_API_SECRET% --channel=unlisted --timeout=60000 --artifacts-dir=web-ext-artifacts"
+  },
+  "keywords": [],
+  "author": "Somebody",
+  "license": "MIT",
+  "packageManager": "pnpm@10.33.4",
+  "devDependencies": {
+    "cross-var": "^1.1.0",
+    "dotenv-cli": "^11.0.0",
+    "web-ext": "^10.7.0"
+  }
+}
